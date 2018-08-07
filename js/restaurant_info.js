@@ -1,41 +1,10 @@
 let restaurant;
-var newMap;
+var map;
 
 /**
- * Initialize map as soon as the page is loaded.
+ * Initialize Google map, called from HTML.
  */
-document.addEventListener('DOMContentLoaded', (event) => {  
-  initMap();
-});
-
-/**
- * Initialize leaflet map
- */
-initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {      
-      self.newMap = L.map('map', {
-        center: [restaurant.latlng.lat, restaurant.latlng.lng],
-        zoom: 16,
-        scrollWheelZoom: false
-      });
-      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-        mapboxToken: '<your MAPBOX API KEY HERE>',
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-          '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-          'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox.streets'    
-      }).addTo(newMap);
-      fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
-    }
-  });
-}  
- 
-/* window.initMap = () => {
+window.initMap = () => {
   fetchRestaurantFromURL((error, restaurant) => {
     if (error) { // Got an error!
       console.error(error);
@@ -49,7 +18,7 @@ initMap = () => {
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
     }
   });
-} */
+}
 
 /**
  * Get current restaurant from page URL.
@@ -127,6 +96,7 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
+  title.setAttribute('tabindex' , "0") ;
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
@@ -148,6 +118,7 @@ fillReviewsHTML = (reviews = self.restaurant.reviews) => {
  */
 createReviewHTML = (review) => {
   const li = document.createElement('li');
+  li.setAttribute('tabindex' , "0") ;
   const name = document.createElement('p');
   name.innerHTML = review.name;
   li.appendChild(name);
@@ -173,9 +144,24 @@ createReviewHTML = (review) => {
 fillBreadcrumb = (restaurant=self.restaurant) => {
   const breadcrumb = document.getElementById('breadcrumb');
   const li = document.createElement('li');
-  li.innerHTML = restaurant.name;
+  `<a href="">`+restaurant.name+`</a>`;
+ // li.innerHTML = restaurant.name;
+  li.innerHTML = `<a href="">`+restaurant.name+`</a>`;
   breadcrumb.appendChild(li);
 }
+
+// fillBreadcrumb = (restaurant = self.restaurant) => {
+//   const breadcrumb = document.getElementById("breadcrumb");
+//   const li = document.createElement("li");
+//   const currentPage = document.createElement("a");
+//   currentPage.href = "#";
+//   currentPage.title = `${restaurant.name} restaurant details`;
+//   currentPage.setAttribute("aria-current", "page");
+//   currentPage.innerHTML = restaurant.name;
+//   li.appendChild(currentPage);
+//   breadcrumb.appendChild(addHomeLink());
+//   breadcrumb.appendChild(li);
+// };
 
 /**
  * Get a parameter by name from page URL.
